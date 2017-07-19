@@ -43,7 +43,8 @@ def build_model(n_input, n_class, hypers, init_params):
       A list containing the gradients of the parameters of the model.
     """
     # Initialise random number generators
-    rng = np.random.RandomState(hypers['seed'])
+    #rng = np.random.RandomState(hypers['seed'])
+    rng = np.random.RandomState(None)
     t_rng = T.shared_randomstreams.RandomStreams(hypers['seed'])
 
     n_visible = n_input + n_class
@@ -192,8 +193,8 @@ def build_drbm(v, W, bv, bh, n_class, drop_prob, t_rng):
     # Compute hidden state activations and energies.
     s_hid = theano.tensor.dot(x, V) + c
 
-    # Apply dropout
-    s_hid = T.switch(t_rng.binomial(size=s_hid.shape, p=drop_prob), s_hid, 0)
+    # Apply dropout --> son commented
+    #s_hid = T.switch(t_rng.binomial(size=s_hid.shape, p=drop_prob), s_hid, 0)
 
     energies, _ = theano.scan(lambda y_class, U, s_hid:
                               s_hid + theano.tensor.dot(y_class, U),

@@ -152,9 +152,9 @@ do
     fi
 
     echo "./train_models.py -d $dat_file -m $mod_file -o $opt_file"
-    python train_models.py -d $dat_file -m $mod_file -o $opt_file
+    python2 train_models.py -d $dat_file -m $mod_file -o $opt_file
     echo "./test_models.py -d $dat_file -e $eva_file"
-    python test_models.py -d $dat_file -e $eva_file
+    python2 test_models.py -d $dat_file -e $eva_file
 done
 
 # TODO 

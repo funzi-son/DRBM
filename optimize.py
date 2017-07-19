@@ -86,11 +86,6 @@ class gradient_descent(object):
                                       dtype=theano.config.floatX)) 
                         for param in model.params]
 
-#        try:
-#            grads = T.grad(model.cost, model.params,
-#                               consider_constant=[model.v_sample])
-#        except AttributeError:
-#            grads = T.grad(model.cost, model.params)
         grads = model.grads
 
         updates_train = []
@@ -140,38 +135,9 @@ class gradient_descent(object):
         RNG.seed(0xbeef); RNG.shuffle(y_train)
         costs = []
 
-        # Son' debug
-        stepc = 0
         for X, y in zip(X_train, y_train):
-            #Son' debug
-            stepc = stepc + 1
-
-            isnan = False
-            print ('Step',stepc)
-            ens  = self.model.get_energies(X)
-
-            logexp = self.model.get_logexp(X)
-
-    
-   #         if np.isnan(logexp).any():
-   #             print 'NaN found in log_exp'
-   #             isnan = True
-            if np.isnan(ens[0]).any():
-                print 'NaN found in energies'
-                isnan = True
-            if np.isnan(ens[1]).any():
-                print 'NaN found in max energies'
-                isnan = True
-            logp = self.model.get_logp(X)
-            if np.isnan(logp).any():
-                print 'NaN found in logp'
-                isnan = True
-            if isnan:
-                exit()
-            
             costs.append(self.train_function(X, y, learning_rate,
                                              effective_momentum))
-        
         return np.mean(costs)
 
     def learn_unsupervised(self, X_train, learning_rate,
@@ -200,8 +166,7 @@ class gradient_descent(object):
         for X in X_train:
             costs.append(self.train_function(X, learning_rate,
                                              effective_momentum))
-            
-            return np.mean(costs)
+        return np.mean(costs)
 
 
     def optimize(self, dataset):
@@ -241,7 +206,7 @@ class gradient_descent(object):
 
         # Initialize learning rate and schedule
         learning_rate = self.hypers['learning_rate']
-        threshold = self.hypers['threshold']
+        self.threshold =threshold= self.hypers['threshold']
         if self.hypers['schedule'] == 'constant':
             rate_update = lambda coeff: self.hypers['learning_rate']
         elif self.hypers['schedule'] == 'linear':
@@ -464,8 +429,8 @@ class adadelta(object):
 
         for X, y in zip(X_train, y_train):
             costs.append(self.train_function(X, y))
-        
         return np.mean(costs)
+
 
     def learn_unsupervised(self, X_train):
         """Compute cost for a model that does unsupervised learning.
@@ -486,10 +451,7 @@ class adadelta(object):
         costs = []
 
         for X in X_train:
-            logp = self.get_logp
-            print logp.shape
             costs.append(self.train_function(X))
-            
         return np.mean(costs)
 
 
@@ -724,7 +686,6 @@ class rmsprop(object):
 
         for X, y in zip(X_train, y_train):
             costs.append(self.train_function(X, y))
-        
         return np.mean(costs)
 
     def learn_unsupervised(self, X_train):

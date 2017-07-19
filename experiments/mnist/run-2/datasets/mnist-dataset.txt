@@ -1,0 +1,1 @@
+/home/tra161/WORK/Data/rtdrbm/data/mnist/data.pkl.gz

@@ -126,8 +126,8 @@ class PredictionModel(object):
 
         # Build the model graph.
         (self.x, self.y, self.y_pred, self.cost, self.params, 
-         self.grads, self.energies, self.log_p, self.max_energy, self.logexp_en) = \
-                 build_prediction_model(n_input, n_class, hypers, init_params)
+         self.grads) = build_prediction_model(n_input, n_class, 
+                                              hypers, init_params)
 
         # Functions for prediction, parameters and gradients
         self.predict_function = theano.function([self.x], self.y_pred,
@@ -140,13 +140,6 @@ class PredictionModel(object):
             self.get_gradients = theano.function([self.x], self.grads,
                                                  allow_input_downcast=True) 
 
-        self.get_logp = theano.function([self.x], self.log_p, 
-                                        allow_input_downcast=True)
-        self.get_energies = theano.function([self.x], [self.energies,
-                                            self.max_energy], 
-                                            allow_input_downcast=True)
-        self.get_logexp = theano.function([self.x], self.logexp_en, 
-                                            allow_input_downcast=True)
         
 def build_prediction_model(n_input, n_class, hypers, init_params):
     """Build the specific model graph.

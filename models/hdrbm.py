@@ -1,14 +1,15 @@
 """The hybrid discriminative restricted Boltzmann machine"""
 
 
-# Author: Srikanth Cherla & Son Tran
-# City University of London
-# Contact: sontn.fz@gmail.com
+# Author: Srikanth Cherla
+# City University London (2014)
+# Contact: abfb145@city.ac.uk
 
 
 from models import np
 from models import theano
 from models import T
+#from drbm import drbm_fprop
 
 theano.config.exception_verbosity = 'high'
 
@@ -60,7 +61,6 @@ def build_model(n_input, n_class, hypers, init_params):
     y = T.ivector(name='y') # XXX: What should be the type of this?
     Y = T.eye(n_class)[y]
     v = T.concatenate((x, Y), axis=1)
-#    v = T.matrix(name='v', dtype=theano.config.floatX)
 
     # Initialize model parameters
     if init_params is None:
@@ -92,7 +92,7 @@ def build_model(n_input, n_class, hypers, init_params):
     
     # Build Gibbs chain and graph to compute the cost function
     v_sample, gen_loss, updates_train = build_chain(v, n_input, n_class, W,
-                                                    b, c, k=n_gibbs,
+                                                    b, c, bin_size, k=n_gibbs,
                                                     activation=activation,
                                                     T_RNG=T_RNG)
   
@@ -111,7 +111,7 @@ def build_model(n_input, n_class, hypers, init_params):
         dis_loss = T.mean(T.sum((Y_class[y] - p_y_given_x) ** 2, axis=1))
 
     # Add weight decay (regularization) to cost.
-    cost = (1-alpha)*dis_loss + alpha * gen_loss
+    cost = dis_loss + alpha * gen_loss
     
     # Regularization with L1 and L2 norms
     L1 = abs(V).sum() + abs(U).sum()
@@ -123,8 +123,8 @@ def build_model(n_input, n_class, hypers, init_params):
     return (x, y, p_y_given_x, cost, params, grads)
 
 
-def build_chain(v, n_input, n_class, W, bv, bh, k=1, activation='sigmoid', 
-                T_RNG=None):
+def build_chain(v, n_input, n_class, W, bv, bh, bin_size, k=1,
+                activation='sigmoid', T_RNG=None):
     """Construct a k-step Gibbs chain starting at v for an RBM.
 
     Input
@@ -154,9 +154,6 @@ def build_chain(v, n_input, n_class, W, bv, bh, k=1, activation='sigmoid',
       RBM. The cost is averaged in the batch case.
     updates: dictionary of Theano variable -> Theano variable
       The `updates` object returned by scan."""
-    # One iteration of the Gibbs sampler.
-    # TODO: Implement sampling from visible layer with different sizes of
-    # softmax units.
     if T_RNG is None:
         T_RNG = T.shared_randomstreams.RandomStreams(860331)
 
@@ -168,11 +165,19 @@ def build_chain(v, n_input, n_class, W, bv, bh, k=1, activation='sigmoid',
             h = T_RNG.binomial(size=mean_h.shape, n=1, p=mean_h,
                                dtype=theano.config.floatX)
         elif activation == 'tanh':
-            raise NotImplementedError
+            proj = T.dot(v, W) + bh
+            mean_h = T.exp(proj) / (T.exp(proj) + T.exp(-proj))
+            h = T_RNG.binomial(size=mean_h.shape, n=1, p=mean_h, dtype=theano.config.floatX)
+            h = h*2-1
+            #h = T.set_subtensor(h[h==0], -1)
         elif activation == 'binomial':
-            raise NotImplementedError
+            assert bin_size > 1
+            mean_h = T.nnet.sigmoid(T.dot(v, W) + bh)
+            h = T_RNG.binomial(size=mean_h.shape, n=bin_size, p=mean_h,
+                               dtype=theano.config.floatX)
         elif activation == 'relu':
-            mean_h = T.maximum(0, T.dot(v, W) + bh)
+#            mean_h = T.maximum(0, T.dot(v, W) + bh)
+            mean_h = T.dot(v, W) + bh
             h = T.maximum(0, mean_h + T_RNG.normal(size=mean_h.shape, avg=0.0,
                                                    std=T.nnet.sigmoid(mean_h)))
         else:
@@ -181,20 +186,7 @@ def build_chain(v, n_input, n_class, W, bv, bh, k=1, activation='sigmoid',
         # Compute visible layer activations given hidden layer
         acts_v = T.dot(h, W.T) + bv
 
-#        # Multinomial visible units sampling (equally sized)
-#        # TODO: Make this an if-else section based on an input hyperparameter
-#        acts_in = acts_v[:, :n_input]
-#        probs_in = T.nnet.softmax(acts_in)
-#        v_in = T_RNG.multinomial(n=1, pvals=probs_in,
-#                                 dtype=theano.config.floatX)
-#        acts_out = acts_v[:, -n_class:]
-#        probs_out = T.nnet.softmax(acts_out)
-#        v_out = T_RNG.multinomial(n=1, pvals=probs_out,
-#                                  dtype=theano.config.floatX)
-#        mean_v = T.concatenate((probs_in, probs_out), axis=1)
-#        v = T.concatenate((v_in, v_out), axis=1)
-
-        # Binomial visible units sampling
+        # Bernoulli visible units sampling
         mean_v = T.nnet.sigmoid(acts_v)
         v = T_RNG.binomial(size=mean_v.shape, n=1, p=mean_v,
                            dtype=theano.config.floatX)

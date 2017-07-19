@@ -138,29 +138,27 @@ def drbm_fprop(x, params, n_class, activation, bin_size):
         log_p, _ = theano.scan(
             lambda d_i, e_i: d_i + T.sum(T.log(1+T.exp(e_i)), axis=1),
             sequences=[d, energies], non_sequences=[])
+        p_y_given_x = T.nnet.softmax(log_p.T)
     elif activation == 'tanh':
         log_p, _ = theano.scan(
             lambda d_i, e_i: d_i + T.sum(T.log(T.exp(-e_i)+T.exp(e_i)), axis=1),
             sequences=[d, energies], non_sequences=[])
+        p_y_given_x = T.nnet.softmax(log_p.T)
     elif activation == 'binomial':
         log_p, _ = theano.scan(
             lambda d_i, e_i: d_i + \
             T.sum(T.log((1-T.exp(bin_size*e_i))/(1-T.exp(e_i))), axis=1),
             sequences=[d, energies], non_sequences=[])
+        p_y_given_x = T.nnet.softmax(log_p.T)
     elif activation == 'relu':
-        # Corresponding non-symbolic code
-#    if activation == 'relu':
-#        for C in xrange(n_class):
-#            log_p[C, :] = d[C] + \
-#                    np.sum(np.log(1/(1 + np.exp(energies[C, :, :]))), axis=1)
-        log_p, _ = theano.scan(
-            lambda d_i, e_i: d_i + T.sum(T.log(1/(1+T.exp(e_i))), axis=1),
-            sequences=[d, energies], non_sequences=[])
+        # XXX: The 0.01 here is a bit hacky - maybe make it a hyperparameter?
+        p, _ = theano.scan(
+                lambda d_i, e_i: T.exp(d_i) * T.prod(0.01/(1-T.exp(e_i)),
+                                                     axis=1), 
+                sequences=[d, energies], non_sequences=[])
+        p = p.T
+        p_y_given_x = p / T.sum(p, axis=0)
     else:
         raise NotImplementedError
-
-    # TODO: Change this to appropriate computation if unnormalised p_y_given_x
-    # is computed above instead of log_p by removing T.log
-    p_y_given_x = T.nnet.softmax(log_p.T)  # XXX: Can the transpose be avoided?
 
     return p_y_given_x
