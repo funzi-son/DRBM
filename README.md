@@ -1,1 +1,1 @@
-# Machine Learning: My own machine learning library #
+Generalised DRBM for Classification
