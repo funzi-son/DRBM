@@ -1,0 +1,22 @@
+#!/bin/bash
+
+#PBS -N EXPT_NAME
+#PBS -l walltime=48:00:00
+#PBS -l nodes=1:ppn=20
+#PBS -e EXPT_DIR/logs/error.log
+#PBS -o EXPT_DIR/logs/output.log
+
+shopt -s expand_aliases
+source $HOME/.bashrc
+
+JOB_LOCATION=CODE_DIR
+cd $JOB_LOCATION
+
+OMP_NUM_THREADS=20 python train_models.py \
+    -d EXPT_DIR/datasets/mnist-dataset.txt \
+    -m EXPT_DIR/models/all-mod.cfg \
+    -o EXPT_DIR/optimizers/all-opt.cfg
+
+OMP_NUM_THREADS=20 python test_models.py \
+    -d EXPT_DIR/datasets/mnist-dataset.txt \
+    -e EXPT_DIR/evaluators/all-eva.cfg

@@ -1,0 +1,39 @@
+Documentation & Tests
+---------------------
+- Unit-tests for models.
+- Documentation with Sphinx.
+
+Refactoring
+-----------
+- Merge optimiser classes.
+- Replace "config" with "json" for configuration files.
+- argparse or argcomplete in place of getopt.
+- Debug/verbose modes to log various model parameters, etc.
+
+Models
+------
+- RNN and Clockwork-RNN.
+- Gaussian noise based regularisation.
+- HDRBM with non-sigmoid activations.
+- LSTM and GRU RNNs.
+- RTNADE.
+- Deep Transition models.
+- Validation for unsupervised learning.
+- Unsupervised RBM.
+
+Features
+--------
+- Integration with Hyperopt and Sacred.
+- Interrupt-save-resume functionality.
+- Add multiple training loss function option in recurrent models, where
+  applicable.
+
+Other
+-----
+- Kaggle contest.
+
+The following didn't work out, so don't redo them again:
+- Replace params list with a dictionary for each of the models. This seems to
+  have been accomplished in the Deep Learning Tutorials LSTM code. Re-visit
+  this later as it isn't really such a big priority. The list is fine as of
+  now.
