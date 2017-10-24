@@ -1,9 +1,9 @@
 """The hybrid discriminative restricted Boltzmann machine"""
 
 
-# Author: Srikanth Cherla
-# City University London (2014)
-# Contact: abfb145@city.ac.uk
+# Author: Srikanth Cherla & Son Tran
+# City University  of London
+# Contact: sontn.fz@gmail.com
 
 
 from models import np

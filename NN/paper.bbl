@@ -1,0 +1,52 @@
+\begin{thebibliography}{1}
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\expandafter\ifx\csname href\endcsname\relax
+  \def\href#1#2{#2} \def\path#1{#1}\fi
+
+\bibitem{Hinton_2006}
+G.~E. Hinton, S.~Osindero, Y.-W. Teh,
+  \href{http://dx.doi.org/10.1162/neco.2006.18.7.1527}{A fast learning
+  algorithm for deep belief nets}, Neural Comput. 18~(7) (2006) 1527–1554.
+\newblock \href {http://dx.doi.org/10.1162/neco.2006.18.7.1527}
+  {\path{doi:10.1162/neco.2006.18.7.1527}}.
+\newline\urlprefix\url{http://dx.doi.org/10.1162/neco.2006.18.7.1527}
+
+\bibitem{Mohamed2012}
+A.-R. Mohamed, G.~Dahl, G.~Hinton, {Acoustic Modeling using Deep Belief
+  Networks}, IEEE Transactions on Audio, Speech, and Language Processing 20~(1)
+  (2012) 14--22.
+
+\bibitem{Larochelle2008}
+H.~Larochelle, Y.~Bengio, {Classification using discriminative restricted
+  Boltzmann machines}, in: International Conference on Machine Learning, ACM
+  Press, 2008, pp. 536--543.
+
+\bibitem{Freund1992}
+Y.~Freund, D.~Haussler, {Unsupervised Learning of Distributions on Binary
+  Vectors using Two Layer Networks}, in: Advances in Neural Information
+  Processing Systems, 1992, pp. 912--919.
+
+\bibitem{Welling2004}
+M.~Welling, M.~Rosen-Zvi, G.~Hinton, {Exponential Family Harmoniums with an
+  Application to Information Retrieval}, in: Advances in Neural Information
+  Processing Systems, 2004, pp. 1481--1488.
+
+\bibitem{Teh2001}
+Y.~W. Teh, G.~Hinton, {Rate-Coded Restricted Boltzmann Machines for Face
+  Recognition}, Advances in Neural Information Processing Systems (2001)
+  908--914.
+
+\bibitem{Nair2010}
+V.~Nair, G.~Hinton, {Rectified Linear Units Improve Restricted Boltzmann
+  Machines}, in: Proceedings of the 27th International Conference on Machine
+  Learning (ICML-10), 2010, pp. 807--814.
+
+\bibitem{Smolensky1986}
+P.~Smolensky, Parallel distributed processing: Explorations in the
+  microstructure of cognition, vol. 1, MIT Press, 1986, Ch. {Information
+  Processing in Dynamical Systems: Foundations of Harmony Theory}, pp.
+  194--281.
+
+\end{thebibliography}
